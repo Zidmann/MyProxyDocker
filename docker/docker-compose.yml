@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  squid:
+    image: proxysquid
+    container_name: proxy
+    ports:
+      - "3128:3128"
+    volumes:
+      - /squid/log:/var/log/squid
+      - /squid/conf/squid.conf:/etc/squid/squid.conf
+      - /squid/cache:/var/spool/squid
+    restart: always
+    env_file:
+      - uid.env
+
