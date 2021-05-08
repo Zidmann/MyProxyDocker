@@ -113,7 +113,7 @@ function docker_compose_up() {
 }
 
 function docker_pull() {
-	docker pull "zidmann/squid:$PROXYVERSION"
+	docker pull "zidmann/proxysquid:$PROXYVERSION"
 }
 
 function squid_log_rotate() {

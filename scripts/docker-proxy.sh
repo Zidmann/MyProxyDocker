@@ -158,6 +158,7 @@ echo "==================================================="
 case "$COMMAND" in
 	"install")
 		check_directory_exists "yes" "$OUTPUT/docker" "Looks like Squid is already installed at $OUTPUT."
+		mkdir -p "$OUTPUT"
 		download_run_file "$RUN_PATH" "$GITHUB_BASE_URL"
 		download_compose_file "$DOCKERCOMPOSE_PATH" "$GITHUB_BASE_URL"
 		"$SCRIPTS_DIR/run.sh" install "$OUTPUT" "$PROXYVERSION"
