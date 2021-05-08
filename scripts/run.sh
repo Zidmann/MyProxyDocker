@@ -16,7 +16,7 @@ set -e
 COMMAND=$1
 OUTPUT_DIR=$2
 PROXYVERSION=$3
-if [[ "$COMMAND" == "" ]] || [[ "$OUTPUT" == "" ]] || [[ "$PROXYVERSION" == "" ]] 
+if [[ "$COMMAND" == "" ]] || [[ "$OUTPUT_DIR" == "" ]] || [[ "$PROXYVERSION" == "" ]] 
 then
 	echo
 	echo "Usage : $0 <COMMAND> <OUTPUT_DIR> <PROXYVERSION>"
@@ -31,10 +31,10 @@ then
 	exit 1
 fi
 
-#Check if the user is not root
+# Check if the user has not a root effective ID
 if [ "$EUID" == "0" ]
 then
-	echo "[-] The user is root and for safety the script will be stopped"
+	echo "[-] The user has root effective ID and for safety the script will be stopped"
 	exit 1
 fi;
 
@@ -43,21 +43,30 @@ ENV_FILE="$ENV_DIR/uid.env"
 DOCKER_DIR="$OUTPUT_DIR/docker"
 
 # Defining the environment file if it is not the case
-HAS_UID=$(grep -c "^LOCAL_UID=" "$ENV_FILE" 2>/dev/null)
-HAS_GID=$(grep -c"^LOCAL_GID=" "$ENV_FILE" 2>/dev/null)
-if [[ "$HAS_UID" != "0" || "$HAS_GID" != "0" ]]
+if [ -f "$ENV_FILE" ]
+then
+	HAS_UID=$(grep -c "^LOCAL_UID=" "$ENV_FILE" 2>/dev/null)
+	HAS_GID=$(grep -c "^LOCAL_GID=" "$ENV_FILE" 2>/dev/null)
+fi
+if [[ "$HAS_UID" != "1" || "$HAS_GID" != "1" ]]
 then
 	LUID=$(id -u "$USER")
+	if [ "$LUID" == "0" ]
+	then
+		LUID=$(id -u "nobody")
+	fi
 	LUID="LOCAL_UID=$LUID"
-	[ "$LUID" == "LOCAL_UID=0" ] && LUID="LOCAL_UID=65534"
 
 	LGID=$(id -g "$USER")
+	if [ "$LGID" == "0" ]
+	then
+		LGID=$(id -g "nobody")
+	fi
 	LGID="LOCAL_GID=$LGID"
-	[ "$LGID" == "LOCAL_GID=0" ] && LGID="LOCAL_GID=65534"
 
 	mkdir -p "$ENV_DIR"
-	echo $LUID >  "$ENV_FILE"
-	echo $LGID >> "$ENV_FILE"
+	echo "$LUID" >  "$ENV_FILE"
+	echo "$LGID" >> "$ENV_FILE"
 fi
 
 # Definition of the functions
@@ -111,6 +120,19 @@ function squid_log_rotate() {
 	docker exec -it squid  "su - squid -c \"\"$(which squid)\" -k rotate\""
 }
 
+function print_command_list() {
+	cat << EOT
+Available commands:
+	install
+	start
+	restart
+	stop
+	update
+	logrotate
+	help
+EOT
+}
+
 # Commands
 case "$COMMAND" in
 	"install")    
@@ -126,4 +148,11 @@ case "$COMMAND" in
 		;;
 	"logrotate")
 		;;
+	"help")
+		print_command_list
+		;;
+	*)
+		echo "Unknown command."
+		echo
+		print_command_list
 esac

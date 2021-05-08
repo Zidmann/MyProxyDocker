@@ -31,7 +31,7 @@ https://github.com/Zidmann/MyProxyDocker
 EOF
 
 # Analysis of the path and the names
-DIRNAME="$(dirname "$(dirname "$(readlink -f "$0")")")"
+DIRNAME="$(dirname "$(readlink -f "$0")")"
 SCRIPT_NAME="$(basename "$(readlink -f "$0")")"
 
 GITHUB_BASE_URL="https://raw.githubusercontent.com/Zidmann/MyProxyDocker/master"
@@ -45,10 +45,10 @@ then
 	exit 0
 fi
 
-#Check if the user is not root
+# Check if the user has not a root effective ID
 if [ "$EUID" == "0" ]
 then
-	echo "[-] The user is root and for safety the script will be stopped"
+	echo "[-] The user has root effective ID and for safety the script will be stopped"
 	exit 1
 fi;
 
@@ -98,7 +98,7 @@ function download_self() {
 function download_compose_file(){
 	local FILE=$1
 	local URL=$2
-	get_file_by_http "$FILE" "$URL/docker/docker-compose.yml""no"
+	get_file_by_http "$FILE" "$URL/docker/docker-compose.yml" "no"
 }
 
 function download_run_file() {

@@ -12,5 +12,5 @@ services:
       - /squid/cache:/var/spool/squid
     restart: always
     env_file:
-      - uid.env
+      - ../env/uid.env
 
