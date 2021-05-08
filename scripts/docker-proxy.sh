@@ -108,9 +108,22 @@ function download_run_file() {
 }
 
 function check_directory_exists() {
-	local DIR=$1
-	local MESSAGE=$2
-	if [ ! -d "$DIR" ]
+	local EXIST=$1
+	local DIR=$2
+	local MESSAGE=$3
+	local ERROR
+
+	if [[ "$EXIST" == "yes" ]] && [[ -d "$DIR" ]]
+	then
+		ERROR=1
+	elif [[ "$EXIST" == "no" ]] && [[ ! -d "$DIR" ]]
+	then
+		ERROR=1
+	else
+		ERROR=0
+	fi
+
+	if [ "$ERROR" != "0" ]
 	then
 		echo "$MESSAGE"
 		exit 1
@@ -144,36 +157,37 @@ echo "==================================================="
 # Commands
 case "$COMMAND" in
 	"install")
-		check_directory_exists "$OUTPUT/docker" "Looks like Squid is already installed at $OUTPUT."
+		check_directory_exists "yes" "$OUTPUT/docker" "Looks like Squid is already installed at $OUTPUT."
 		download_run_file "$RUN_PATH" "$GITHUB_BASE_URL"
 		download_compose_file "$DOCKERCOMPOSE_PATH" "$GITHUB_BASE_URL"
 		"$SCRIPTS_DIR/run.sh" install "$OUTPUT" "$PROXYVERSION"
 		;;
 	"start" | "restart")
-		check_directory_exists "$OUTPUT" "Cannot find a Squid installation at $OUTPUT."
+		check_directory_exists "no"  "$OUTPUT" "Cannot find a Squid installation at $OUTPUT."
 		"$SCRIPTS_DIR/run.sh" restart "$OUTPUT" "$PROXYVERSION"
 		;;
 	"stop")
-		check_directory_exists "$OUTPUT" "Cannot find a Squid installation at $OUTPUT."
+		check_directory_exists "no"  "$OUTPUT" "Cannot find a Squid installation at $OUTPUT."
 		"$SCRIPTS_DIR/run.sh" stop "$OUTPUT" "$PROXYVERSION"
 		;;
 	"update")
-		check_directory_exists "$OUTPUT" "Cannot find a Squid installation at $OUTPUT."
+		check_directory_exists "no"  "$OUTPUT" "Cannot find a Squid installation at $OUTPUT."
 		download_run_file "$RUN_PATH" "$GITHUB_BASE_URL"
 		"$SCRIPTS_DIR/run.sh" update "$OUTPUT" "$PROXYVERSION"
 		;;
 	"updateconf")
-		check_directory_exists "$OUTPUT" "Cannot find a Squid installation at $OUTPUT."
+		check_directory_exists "no"  "$OUTPUT" "Cannot find a Squid installation at $OUTPUT."
 		"$SCRIPTS_DIR/run.sh" update "$OUTPUT" "$PROXYVERSION"
 		;;
 	"updaterun")
-		check_directory_exists "$OUTPUT" "Cannot find a Squid installation at $OUTPUT."
+		check_directory_exists "no"  "$OUTPUT" "Cannot find a Squid installation at $OUTPUT."
 		download_run_file "$RUN_PATH" "$GITHUB_BASE_URL"
 		;;
 	"updateself")
 		download_self "$SCRIPT_PATH" "$GITHUB_BASE_URL" && echo "Updated self." && exit
 		;;
 	"logrotate")
+		check_directory_exists "no"  "$OUTPUT" "Cannot find a Squid installation at $OUTPUT."
 		"$SCRIPTS_DIR/run.sh" logrotate "$OUTPUT" "$PROXYVERSION"
 		;;
 	"help")
