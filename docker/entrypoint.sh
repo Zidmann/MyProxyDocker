@@ -100,6 +100,10 @@ else
 fi
 
 echo "--------------------------------------------------------------"
+echo "[i] Setting a shell for $USERNAME"
+chsh -s /bin/bash "$USERNAME"
+
+echo "--------------------------------------------------------------"
 echo "[i] Starting squid proxy..."
 su - "$USERNAME" -c "\"$(which squid)\" -NYCd 1"
 
