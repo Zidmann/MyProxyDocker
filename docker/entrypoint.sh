@@ -66,7 +66,7 @@ set_permissions "$USERNAME" "$GROUPNAME" "700" "/var/log/squid"
 
 echo "--------------------------------------------------------------"
 OLD_UID=$(id -u "$USERNAME")
-echo "[i] Moving the squid UID from $OLD_UID to $LUID"
+echo "[i] Moving the $USERNAME UID from $OLD_UID to $LUID"
 if [ "$OLD_UID" == "$LUID" ]
 then
 	echo " -> Not necessary"
@@ -75,7 +75,7 @@ else
 fi
 
 OLD_GID=$(id -g "$GROUPNAME")
-echo "[i] Moving the squid GID from $OLD_GID to $LGID"
+echo "[i] Moving the $USERNAME GID from $OLD_GID to $LGID"
 if [ "$OLD_GID" == "$LGID" ]
 then
 	echo " -> Not necessary"
@@ -101,5 +101,5 @@ fi
 
 echo "--------------------------------------------------------------"
 echo "[i] Starting squid proxy..."
-su - squid -c "\"$(which squid)\" -NYCd 1"
+su - "$USERNAME" -c "\"$(which squid)\" -NYCd 1"
 
