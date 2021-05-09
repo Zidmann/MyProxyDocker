@@ -100,6 +100,10 @@ else
 fi
 
 echo "--------------------------------------------------------------"
+echo "[i] Giving permission to /run directory for all users and groups"
+chmod a+rwx "/run"
+
+echo "--------------------------------------------------------------"
 echo "[i] Setting a shell for $USERNAME"
 chsh -s /bin/bash "$USERNAME"
 
