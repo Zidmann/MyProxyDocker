@@ -66,7 +66,7 @@ set_permissions "$USERNAME" "$GROUPNAME" "700" "/var/log/squid"
 
 echo "--------------------------------------------------------------"
 OLD_UID=$(id -u "$USERNAME")
-echo "[i] Moving the $USERNAME UID from $OLD_UID to $LUID"
+echo "[i] Moving the $USERNAME UID from $OLD_UID to $LUID for $USERNAME user"
 if [ "$OLD_UID" == "$LUID" ]
 then
 	echo " -> Not necessary"
@@ -84,7 +84,7 @@ else
 fi
 
 echo "--------------------------------------------------------------"
-echo "[i] Finding and changing the remaining files or directories"
+echo "[i] Finding and changing the remaining files or directories for $GROUPNAME group"
 if [ "$OLD_UID" == "$LUID" ]
 then
 	echo " -> UID changes not necessary"
